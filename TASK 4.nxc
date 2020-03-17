@@ -1,0 +1,89 @@
+#define THRESHOLDLIGHT 35
+#define THRESHOLD 90
+#define MIC SENSOR_2
+#define SPEED 50
+#define NEAR 40 //cm
+int turn_time,wait_time;
+
+task main()
+{
+ SetSensorSound(IN_3);
+ SetSensorLight(IN_1);
+SetSensorLowspeed(IN_4);
+ int state=-1;
+
+
+
+while (true)
+ {
+
+  if(THRESHOLD < Sensor(IN_3) && (state<0))
+    {
+     Wait(200);
+    state=0;
+    }
+
+
+    if(state==0){
+
+     while((SensorUS(IN_4)>NEAR)){
+        OnFwd(OUT_C,50);
+        OnRev(OUT_B,50);}
+
+        while(Sensor(IN_1)>THRESHOLDLIGHT)
+          {OnFwd(OUT_BC,70);}
+
+
+        state=1;
+     }
+
+
+    if(THRESHOLD < Sensor(IN_3) && (state>0) )
+{
+     Wait(200);
+      state=-1;
+      }
+
+
+if(state==-1)   // avance pas
+Off(OUT_BC);
+
+
+ if(state==1)
+{                                // if we clap, we enter in this "if"
+
+
+
+  if (Sensor(IN_1) < THRESHOLDLIGHT)   // square code
+ {
+     OnRev(OUT_BC, 50);
+     wait_time= Random(500);
+     Wait(wait_time);
+
+     if (Random(100) >=50)
+     {
+      OnFwd(OUT_B,SPEED);
+      turn_time= (Random(1000)+200);
+      Wait(turn_time);
+
+     }
+     else
+     {
+      OnFwd(OUT_C,SPEED);
+      turn_time= (Random(1000)+200);
+      Wait(turn_time);
+
+      }
+ }
+ if (Sensor(IN_1) >= THRESHOLDLIGHT)
+      OnFwd(OUT_BC, SPEED);
+
+
+
+
+ }                       // end of square code
+                                            //end of "if" "Fwd"
+
+
+}
+}
